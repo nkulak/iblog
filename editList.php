@@ -1,18 +1,29 @@
-<html>
-<body>
 <?php
-include('config.php');
-$query1=mysql_query("select id, title, content from blog");
-echo "<table><tr><td>ID</td><td>Title</td><td></td><td></td>";
-while($query2=mysql_fetch_array($query1))
-{
-echo "<tr><td>".$query2['id']."</td>";
-echo "<td>".$query2['title']."</td>";
-echo "<td><a href='edit.php?id=".$query2['id']."'>Edit</a></td>";
-echo "<td><a href='delete.php?id=".$query2['id']."'>Delete</a></td><tr>";
-}
+
+//$config = include 'config.php';
+$config = include 'config-local.php';
+$dbh = new PDO("mysql:host=" . $config['host'] . ";dbname=nick", $config['username'], $config['password']);
+$sth = $dbh->prepare('select id, title from blog');
+$sth->execute();
+$posts = $sth->fetchAll(PDO::FETCH_ASSOC);
 ?>
-</ol>
-</table>
-</body>
+<html>
+    <body>
+        <table>
+            <tr>
+                <td>ID</td>
+                <td>Title</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <?php foreach($posts as $post):?>
+            <tr>
+                <td><?= $post['id'] ?></td>
+                <td><?= $post['title'] ?></td>
+                <td><a href='edit.php?id=<?= $post['id'] ?>'>Edit</a></td>
+                <td><a href='delete.php?id=<?= $post['id'] ?>'>Delete</a></td>
+            </tr>
+            <?php endforeach;?>
+        </table>
+    </body>
 </html>
